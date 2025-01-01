@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск радиодеталей и компонентов</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F5F5F5;
+            margin: 0;
+            padding: 0;
+            color: #333333;
+        }
+
+        header {
+            background-color: #007ACC;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .search-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        input[type="text"] {
+            padding: 15px;
+            width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007ACC;
+            outline: none;
+        }
+
+        button {
+            padding: 15px 20px;
+            background-color: #007ACC; /* Синяя кнопка */
+            border: none;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #005999; /* Более темный синий при наведении */
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px;
+        }
+
+        .column {
+            flex: 1;
+            margin: 0 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #555;
+            font-size: 24px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #007ACC;
+            padding-bottom: 10px;
+        }
+
+        .result {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            transition: box-shadow 0.3s;
+            position: relative;
+        }
+
+        .result:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        a {
+            color: #007ACC;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #d9534f;
+            font-size: 18px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Поиск радиодеталей и компонентов</h1>
+    </header>
+
+    <div class="search-container">
+        <form method="post">
+            <input type="text" name="search_query" placeholder="Введите наименование или код для поиска" value="{{ search_query }}">
+            <button type="submit">Поиск</button>
+        </form>
+    </div>
+
+    {% if elecomp_results or chipdip_results %}
+    <div class="container">
+        <div class="column">
+            <h2>Электронные компоненты (elecomp)</h2>
+            {% for result in elecomp_results %}
+            <div class="result">
+                <h3>{{ result.title }}</h3>
+                <p>Ссылка: <a href="{{ result.product_url }}">{{ result.product_url }}</a></p>
+                <p>{% if 'In stock' in result.stock %}{{ result.stock.split(':')[1].strip().split(' ')[0] }}{% else %}{{ result.stock }}{% endif %}</p>
+                <p>Цена: {{ result.price }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="column">
+            <h2>ЧИП и ДИП (chipdip)</h2>
+            {% for result in chipdip_results %}
+            <div class="result">
+                <h3>{{ result.title }}</h3>
+                <p>Ссылка: <a href="{{ result.product_url }}">{{ result.product_url }}</a></p>
+                <p>В наличии: {{ result.stock }} шт.</p>
+                <p>Цена: {{ result.price }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <p class="no-results">Результаты не найдены.</p>
+    {% endif %}
+</body>
+</html>
